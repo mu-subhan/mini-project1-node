@@ -1,0 +1,20 @@
+require('dotenv').config();
+const mongoose = require('mongoose');
+
+// Define user schema
+const userSchema = new mongoose.Schema({
+    username: { type: String, required: true },
+    name: { type: String, required: true },
+    age: { type: Number, required: true },
+    email: { type: String, required: true },
+    password: { type: String },
+    posts : [
+        {type:mongoose.Schema.Types.ObjectId,ref:"post"}
+    ]
+});
+
+// Create the user model 
+const User = mongoose.model("User", userSchema);
+
+// Export the user model
+module.exports = User;
