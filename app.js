@@ -9,7 +9,14 @@ const path = require('path');
 const bcrypt = require('bcryptjs');
 const { hash } = require('crypto');
 const jwt = require('jsonwebtoken');
-const { log } = require('console');
+const crypto = require('crypto')
+const multeronfig = require("./config/multerconfig");
+const upload = require('./config/multerconfig');
+
+
+
+
+
 
 // Connect to MongoDB Atlas
 mongoose.connect(process.env.MONGO_URI, {
@@ -22,7 +29,7 @@ mongoose.connect(process.env.MONGO_URI, {
 .catch(err => console.error('MongoDB connection error:', err));
 
 app.set("view engine", 'ejs');
-app.use(express.static(path.join(__dirname)));
+app.use(express.static(path.join(__dirname,"public")));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -30,6 +37,17 @@ app.use(cookieParser());
 
 app.get('/', function (req, res) {
     res.render('index');
+});
+
+app.get('/profile/upload', function (req, res) {
+    res.render('profileupload');
+});
+
+app.post("/upload",isLoggedIn,upload.single("image"),async(req,res) =>{
+    let user = await userModel.findOne({email:req.user.email});
+    user.profilepic = req.file.filename;
+    await user.save();
+    res.redirect("/profile");
 });
 
 app.post('/register', async (req, res) => {
@@ -70,6 +88,7 @@ app.post('/register', async (req, res) => {
         })
     })
 });
+
 
 // for login 
 
